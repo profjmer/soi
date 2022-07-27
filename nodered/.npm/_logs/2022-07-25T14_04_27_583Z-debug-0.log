@@ -1,0 +1,55 @@
+0 verbose cli /usr/local/bin/node /usr/src/node-red/node_modules/.bin/npm
+1 info using npm@8.14.0
+2 info using node@v14.20.0
+3 timing npm:load:whichnode Completed in 0ms
+4 timing config:load:defaults Completed in 3ms
+5 timing config:load:file:/usr/src/node-red/node_modules/npm/npmrc Completed in 7ms
+6 timing config:load:builtin Completed in 7ms
+7 timing config:load:cli Completed in 10ms
+8 timing config:load:env Completed in 0ms
+9 timing config:load:project Completed in 9ms
+10 timing config:load:file:/usr/src/node-red/.npmrc Completed in 0ms
+11 timing config:load:user Completed in 0ms
+12 timing config:load:file:/usr/local/etc/npmrc Completed in 0ms
+13 timing config:load:global Completed in 0ms
+14 timing config:load:validate Completed in 0ms
+15 timing config:load:credentials Completed in 2ms
+16 timing config:load:setEnvs Completed in 2ms
+17 timing config:load Completed in 37ms
+18 timing npm:load:configload Completed in 38ms
+19 timing npm:load:mkdirpcache Completed in 9ms
+20 timing npm:load:mkdirplogs Completed in 6ms
+21 verbose title npm start --userDir /data
+22 verbose argv "--no-update-notifier" "--no-fund" "start" "--cache" "/data/.npm" "--" "--userDir" "/data"
+23 timing npm:load:setTitle Completed in 4ms
+24 timing config:load:flatten Completed in 7ms
+25 timing npm:load:display Completed in 8ms
+26 verbose logfile logs-max:10 dir:/data/.npm/_logs
+27 verbose logfile /data/.npm/_logs/2022-07-25T14_04_27_583Z-debug-0.log
+28 timing npm:load:logFile Completed in 90ms
+29 timing npm:load:timers Completed in 0ms
+30 timing npm:load:configScope Completed in 1ms
+31 timing npm:load Completed in 156ms
+32 silly logfile start cleaning logs, removing 2 files
+33 silly logfile done cleaning log files
+34 timing command:run-script Completed in 511885ms
+35 timing command:start Completed in 511891ms
+36 verbose stack Error: command failed
+36 verbose stack     at ChildProcess.<anonymous> (/usr/src/node-red/node_modules/npm/node_modules/@npmcli/promise-spawn/lib/index.js:63:27)
+36 verbose stack     at ChildProcess.emit (events.js:400:28)
+36 verbose stack     at maybeClose (internal/child_process.js:1088:16)
+36 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:296:5)
+37 verbose pkgid node-red-docker@3.0.0
+38 verbose cwd /usr/src/node-red
+39 verbose Linux 5.10.102.1-microsoft-standard-WSL2
+40 verbose node v14.20.0
+41 verbose npm  v8.14.0
+42 error path /usr/src/node-red
+43 error command failed
+44 error signal SIGTERM
+45 error command sh /tmp/start-a25f5a5f.sh
+46 verbose exit 1
+47 timing npm Completed in 512070ms
+48 verbose code 1
+49 error A complete log of this run can be found in:
+49 error     /data/.npm/_logs/2022-07-25T14_04_27_583Z-debug-0.log

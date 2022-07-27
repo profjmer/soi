@@ -1,0 +1,83 @@
+version: "3.7"
+
+services:
+  nodered:
+    container_name: nodered
+    build: ./nodered
+    networks:
+      - dockernet
+    ports:
+      - 1880:1880
+      - 54321:54321/udp      
+    volumes:
+      - ./nodered:/data   
+    restart: unless-stopped 
+    environment:
+      TZ: /etc/localtime   
+
+  influxdb:
+    container_name: influxdb  
+    image: "influxdb:1.8.3"
+    networks:
+      - dockernet
+    ports:
+      - 8083:8083
+      - 8086:808
+      - 8089:8089/udp      
+    volumes:
+      - ./influx:/var/lib/influxdb 
+    environment:
+      - INFLUXDB_DB=soi
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin  
+      - INFLUXDB_USERNAME=user
+      - INFLUXDB_PASSWORD=password
+    restart: unless-stopped  
+
+  grafana:
+    image: grafana/grafana:9.0.3
+    container_name: grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning:/var/lib/grafana/provisioning     
+    networks:
+      - dockernet
+    ports:
+      - 3003:3000
+    depends_on:
+      - influxdb    
+    restart: unless-stopped 
+
+  chronograf:
+      container_name: chronograf
+      image: chronograf:1.7.8
+      volumes:
+          - ./chronograf:/var/lib/chronograf
+      ports:
+        - 3004:8888  
+      networks:
+      - dockernet
+      environment:
+        - INFLUXDB_URL=http://influxdb:8086 # needs to match container_name
+        - INFLUXDB_USERNAME=${INFLUXDB_USERNAME} # sourced from .env
+        - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD} # sourced from .env      
+      depends_on:
+      - influxdb               
+      restart: unless-stopped 
+
+  nginx:
+    container_name: nginx
+    image: "nginx"
+    restart: unless-stopped 
+    networks:
+      - dockernet    
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./www:/data/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - influxdb 
+networks:
+  dockernet:     

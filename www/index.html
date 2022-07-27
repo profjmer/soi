@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="bme.png">
+	<title>BME280</title>
+	<link href="bootstrap.min.css" rel="stylesheet">
+	<script src="gauge.min.js"></script>
+	<script src="bme280jauges.js"></script>
+	<script src="bootstrap.bundle.min.js"></script>
+	<style type="text/css">
+		body { background-color:rgb(0, 0, 0) }
+		nav {background-color: rgb(80, 79, 79) }
+	</style>
+</head>
+<body onload="setupWebsocket();">
+  <div class="container">
+    <div class="header">
+   		  <nav>
+          <ul class="nav nav-tabs">
+						<li role="presentation"class="nav-item nav-link active"><a href="/index.html">Jauges </a></li>  	
+						<li role="presentation"class="nav-item nav-link"><a href="/bme280histo.html">GRAPHE</a></li>						
+          </ul>
+        </nav>     
+		</div>
+		<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+			<input type="radio" class="btn-check" name="btnradio" id="Maison" onclick="radioClick(id)" autocomplete="off" checked>
+			<label class="btn btn-outline-primary" for="Maison">Maison</label>
+		
+			<input type="radio" class="btn-check" name="btnradio" id="Sous-sol" onclick="radioClick(id)" autocomplete="off">
+			<label class="btn btn-outline-primary" for="Sous-sol">Sous-sol</label>
+		
+			<input type="radio" class="btn-check" name="btnradio" id="Garage" onclick="radioClick(id)" autocomplete="off">
+			<label class="btn btn-outline-primary" for="Garage">Garage</label>
+		</div>
+
+		<button class="btn btn-outline-info" id="time" type="button">No data</button>
+		<div class="col-xs-offset-1">
+			<div class="col-xs-10 col-md3">
+				<canvas id="bme-t"
+					data-type="radial-gauge"
+					data-width="250"
+					data-height="250"
+					data-min-value="-50"
+					data-max-value="50"					
+					data-units="°C"
+					data-title="T"
+					data-value="-50"
+					data-value-box="true"
+					data-minor-ticks="5"
+					data-major-ticks="-50,-40,-30,-20,-10,0,10,20,30,40,50"
+					data-highlights='[
+					{ "from": -50, "to": 5, "color": "blue" },
+					{ "from": 5, "to": 15, "color": "yellow" },
+					{ "from": 15, "to": 25, "color": "green" },
+					{ "from": 25, "to": 30, "color": "yellow" },
+					{ "from": 30, "to": 50, "color": "red" }
+					]'					
+					data-color-plate="#ddd"
+					data-animation-rule="bounce"
+					data-animation-duration="100"
+					data-font-value="Led"
+					data-animated-value="true"
+				></canvas>
+				<canvas id="bme-p"
+					data-type="radial-gauge"
+					data-width="250"
+					data-height="250"
+					data-min-value="90"
+					data-max-value="110"		
+					data-minor-ticks="1"
+					data-major-ticks="90,95,100,105,110"
+					data-color-plate="#ddd"					
+					data-highlights='[
+					{ "from": 90, "to": 95, "color": "yellow" },
+					{ "from": 95, "to": 105, "color": "green" },
+					{ "from": 105, "to": 110, "color": "yellow" }
+					]'							
+					data-units="kPa"
+					data-title="P"
+					data-value="90"
+					data-value-box="true"
+
+					data-animation-rule="bounce"
+					data-animation-duration="100"
+					data-font-value="Led"
+					data-animated-value="true"
+				></canvas>	
+				<canvas id="bme-h"
+					data-type="radial-gauge"
+					data-width="250"
+					data-height="250"
+					data-min-value="0"
+					data-max-value="100"		
+					data-minor-ticks="1"
+					data-color-plate="#ccc"					
+					data-highlights='[
+					{ "from": 0, "to": 40, "color": "brown" },
+					{ "from": 41, "to": 70, "color": "green" },
+					{ "from": 71, "to": 100, "color": "blue" }
+					]'							
+					data-units="%"
+					data-title="HR"
+					data-value="0"
+					data-value-box="true"
+
+					data-animation-rule="bounce"
+					data-animation-duration="100"
+					data-font-value="Led"
+					data-animated-value="true"
+				></canvas>					
+			</div>
+		</div>	
+	</div>	
+	
+  <footer>
+  <div class="text-center" style="background-color: black; color: rgb(109, 112, 92);">
+		profjmer@gmail.com
+  </div>
+	</footer>		
+	<script>
+		// envoi un message pour récupérer la dernière valeur du capteur BME280 selon le bouton radio sélectionné
+		function radioClick(id){
+			ws.send("SELECT * FROM \"mesures\" WHERE \"LIEU\" = '" +id+"' ORDER BY time DESC limit 1 tz('America/Montreal')");
+		}
+	</script>					
+</body>
+</html>

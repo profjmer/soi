@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+	<head>
+	  <meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" href="chart.png">
+		<title>Historique</title>
+		<script src="utils.js"></script>				
+		<script src="Chart.bundle.min.js"></script>
+		<script src="bme280histo.js"></script>
+		<link href="bootstrap.min.css" rel="stylesheet">
+		<script src="bootstrap.bundle.min.js"></script>
+
+		<style type="text/css">
+			body { background-color:rgb(0, 0, 0) }	
+			nav {background-color: rgb(80, 79, 79) }
+			canvas {
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+		</style>
+	</head>
+
+	<body onload="setupWebsocket();">
+		<div class="container">
+			<div class="header">
+				<nav>
+          <ul class="nav nav-tabs">
+						<li role="presentation"class="nav-item nav-link "><a href="/index.html">Jauges </a></li>  	
+						<li role="presentation"class="nav-item nav-link active"><a href="/bme280histo.html">GRAPHE</a></li>						
+          </ul>
+        </nav>    
+			</div>
+			<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+				<input type="radio" class="btn-check" name="btnradio" id="Maison" onclick="radioClick(id)" autocomplete="off" checked>
+				<label class="btn btn-outline-primary" for="Maison">Maison</label>
+			
+				<input type="radio" class="btn-check" name="btnradio" id="Sous-sol" onclick="radioClick(id)" autocomplete="off">
+				<label class="btn btn-outline-primary" for="Sous-sol">Sous-sol</label>
+			
+				<input type="radio" class="btn-check" name="btnradio" id="Garage" onclick="radioClick(id)" autocomplete="off">
+				<label class="btn btn-outline-primary" for="Garage">Garage</label>
+			</div>
+
+			<div>
+				<canvas id="canvas"></canvas>
+			</div>
+
+			<script> 
+				var lineChartData = {
+					datasets: [{
+						label: 'Température',
+						borderColor: window.chartColors.red,
+						backgroundColor: window.chartColors.red,
+						fill: false,
+						//data: [],
+						yAxisID: 'y-axis-1',
+					}, {
+						label: 'Humidité',
+						borderColor: window.chartColors.blue,
+						backgroundColor: window.chartColors.blue,
+						fill: false,
+						//data: [],
+						yAxisID: 'y-axis-2'
+					}, {
+						label: 'Pression',
+						borderColor: window.chartColors.yellow,
+						backgroundColor: window.chartColors.yellow,
+						fill: false,
+						//data: [],
+						yAxisID: 'y-axis-3'
+					}]
+				};
+
+				// créer le graphe dans la page
+
+				var ctx = document.getElementById('canvas').getContext('2d');
+				window.myLine = Chart.Line(ctx, {
+					data: lineChartData,
+					options: {
+						responsive: true,
+						hoverMode: 'index',
+						stacked: false,
+						title: {
+							display: true,
+							text: 'Capteurs'
+						},
+						scales: {
+								xAxes: [{
+								type: 'time',
+								time: {
+														displayFormats: {
+										second: 'HH:mm:ss',
+										minute: 'HH:mm',
+										hour: 'HH'
+									}
+								},
+								display: true,
+								scaleLabel: {
+									display: true,
+									labelString: 'Historique'
+								},
+								ticks: {
+									major: {
+										fontStyle: 'bold',
+										fontColor: '#FF0000'
+									}
+								}
+							}],
+							yAxes: [
+								{
+									type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+									display: true,
+									position: 'right',
+									id: 'y-axis-1',
+									ticks: {
+										fontColor: "red",
+										min: -50,
+										max: 50
+									},
+									scaleLabel:{
+										labelString:"°C"
+									},
+								}, 
+								{
+									type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+									display: true,
+									position: 'right',
+									id: 'y-axis-3',
+									ticks: {
+										fontColor: "yellow",
+										min: 90,
+										max: 110									
+									},
+									scaleLabel:{
+										labelString:"KPa"
+									},
+								}, 
+								{
+									type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+									display: true,
+									position: 'right',
+									id: 'y-axis-2',
+									ticks: {
+										fontColor: "blue",
+										min: 0,
+										max: 100					
+									},
+									scaleLabel:{
+										labelString:"%"
+									},
+								
+									// grid line settings
+									gridLines: {
+										drawOnChartArea: false, // only want the grid lines for one axis to show up
+									}
+								}
+							],
+						}
+					}
+				});		
+			</script>		
+		<footer>
+			<div class="text-center" style="background-color: black; color: rgb(109, 112, 92);">
+				profjmer@gmail.com
+			</div>
+			</footer>		
+	</div>
+		<script>
+			// envoi un message pour récupérer valeur du capteur BME280 selon le bouton radio sélectionné
+			function radioClick(id){
+				ws.send("SELECT * FROM \"mesures\" WHERE \"LIEU\" = '" +id+"' ORDER BY time DESC limit 50 tz('America/Montreal')");
+			}
+		</script>	
+	</body>
+</html>
+

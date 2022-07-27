@@ -1,0 +1,644 @@
+[
+    {
+        "id": "aa6bb05e5ab711d5",
+        "type": "tab",
+        "label": "Influx, UDP, websocket",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ee2ce49c13abaf2f",
+        "type": "websocket-listener",
+        "path": "/websocket",
+        "wholemsg": "false"
+    },
+    {
+        "id": "bf3db3a0caf07bb4",
+        "type": "influxdb",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "soi",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "http://localhost:8086",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "979a25c0.d2d308",
+        "type": "influxdb",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "soi",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "",
+        "rejectUnauthorized": false
+    },
+    {
+        "id": "47e65543beba96fa",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Génération des données Maison",
+        "func": "var ts =new(Date);\nmsg.payload = [{\n        \"Temperature\": (50 - Math.random() * 100).toFixed(1),\n        \"Humidity\": (Math.random() * 100).toFixed(0),\n        \"Pression\": (90 + Math.random() * 20).toFixed(1),\n\n        \"Capteur\": \"BME280\",\n        \"LIEU\": \"Maison\",\n        \"time\" : ts\n}];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 60,
+        "wires": [
+            [
+                "d49e971ffb35f670",
+                "88e191fcb5a7e06d",
+                "cf033b685ef81bc4"
+            ]
+        ]
+    },
+    {
+        "id": "ce1fd3f021e0c40a",
+        "type": "inject",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 60,
+        "wires": [
+            [
+                "47e65543beba96fa",
+                "de03f0667a96596b",
+                "78f89cb012b404c4"
+            ]
+        ]
+    },
+    {
+        "id": "d49e971ffb35f670",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "0140a5c5ba7f5538",
+        "type": "comment",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Test d'écrire de valeurs aléatoires dans InfluxDB avec noeud influx in et envoi au fureteur connecté",
+        "info": "",
+        "x": 340,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "cf033b685ef81bc4",
+        "type": "websocket out",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "server": "ee2ce49c13abaf2f",
+        "client": "",
+        "x": 1020,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "6d8d6cc5be6766a8",
+        "type": "websocket in",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "server": "ee2ce49c13abaf2f",
+        "client": "",
+        "x": 80,
+        "y": 420,
+        "wires": [
+            [
+                "f70bf6bba0576440",
+                "96f3d332156c26a6"
+            ]
+        ]
+    },
+    {
+        "id": "d75accfe352da3cb",
+        "type": "comment",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Réception websocket, traitement et retour par websocket au fureteur",
+        "info": "Les requêtes proviennent du fureteur",
+        "x": 240,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "77ecc8829a5cbdf9",
+        "type": "influxdb in",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "bf3db3a0caf07bb4",
+        "name": "",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "organisation",
+        "x": 700,
+        "y": 420,
+        "wires": [
+            [
+                "cf033b685ef81bc4"
+            ]
+        ]
+    },
+    {
+        "id": "8e59f53ab3b85c5f",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f8958870.ca7b38",
+        "type": "inject",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 600,
+        "wires": [
+            [
+                "13db71de.69296e"
+            ]
+        ]
+    },
+    {
+        "id": "13db71de.69296e",
+        "type": "influxdb in",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "979a25c0.d2d308",
+        "name": "Create database",
+        "query": "create database soi",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "",
+        "x": 270,
+        "y": 600,
+        "wires": [
+            [
+                "23bbbec6.c3ae82"
+            ]
+        ]
+    },
+    {
+        "id": "23bbbec6.c3ae82",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 470,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "559a402c.6039c",
+        "type": "inject",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 680,
+        "wires": [
+            [
+                "683afc48.610bf4"
+            ]
+        ]
+    },
+    {
+        "id": "683afc48.610bf4",
+        "type": "influxdb in",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "979a25c0.d2d308",
+        "name": "select",
+        "query": "select * from mesures order by desc limit 10",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "",
+        "x": 230,
+        "y": 680,
+        "wires": [
+            [
+                "d2fa1dde.e284d"
+            ]
+        ]
+    },
+    {
+        "id": "d2fa1dde.e284d",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 470,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "2a844695.02722a",
+        "type": "inject",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 640,
+        "wires": [
+            [
+                "463ebbbe.5f03c4"
+            ]
+        ]
+    },
+    {
+        "id": "463ebbbe.5f03c4",
+        "type": "influxdb in",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "979a25c0.d2d308",
+        "name": "drop database",
+        "query": "drop database soi",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "",
+        "x": 260,
+        "y": 640,
+        "wires": [
+            [
+                "f4b81f30.10f08"
+            ]
+        ]
+    },
+    {
+        "id": "f4b81f30.10f08",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 470,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "4fb02afc.49c094",
+        "type": "inject",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 720,
+        "wires": [
+            [
+                "3503ed38.5ec112"
+            ]
+        ]
+    },
+    {
+        "id": "3503ed38.5ec112",
+        "type": "influxdb in",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "979a25c0.d2d308",
+        "name": "drop mesures",
+        "query": "drop measurement mesures",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "",
+        "x": 260,
+        "y": 720,
+        "wires": [
+            [
+                "817a7bf8.118858"
+            ]
+        ]
+    },
+    {
+        "id": "817a7bf8.118858",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 470,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "f6ce4bb1.7f24e8",
+        "type": "comment",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Quelques commandes InfluxQL",
+        "info": " - Permet de créer une banque de données\n - Permet de détruire la banque de données \n - Permet de lire les mesures \n - Permet d'effacer les mesures",
+        "x": 130,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "f70bf6bba0576440",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 240,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "96f3d332156c26a6",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Requête influx",
+        "func": "msg.query = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 420,
+        "wires": [
+            [
+                "77ecc8829a5cbdf9",
+                "8e59f53ab3b85c5f"
+            ]
+        ]
+    },
+    {
+        "id": "759c225f6f32fbe1",
+        "type": "comment",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Réceptoin UDP de données des capteurs, insertion dans InfluxDB et envoi au fureteur connecté",
+        "info": "Lors de la réception UDP, il faut insérer les données dans Influx et transmettre par websocket au fureteur connecté.",
+        "x": 330,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e9c7475f3f0a460d",
+        "type": "udp in",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "iface": "",
+        "port": "54321",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 60,
+        "y": 240,
+        "wires": [
+            [
+                "c7ccecd4a0fcc4fd"
+            ]
+        ]
+    },
+    {
+        "id": "65d30239df1cea7b",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "c7ccecd4a0fcc4fd",
+        "type": "json",
+        "z": "aa6bb05e5ab711d5",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 210,
+        "y": 240,
+        "wires": [
+            [
+                "15d9e5b18c203af9",
+                "9db112eee3c051ac",
+                "38e442908d180c9f"
+            ]
+        ]
+    },
+    {
+        "id": "15d9e5b18c203af9",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Format Influx pour noeud batch",
+        "func": "var data = msg.payload;\nif(data.ts ==undefined || data.ts==\"\")data.ts=new(Date);\nmsg.payload=[{\n    measurement:\"mesures\",\n    fields:data.field,\n    tags:data.tag,\n    timestamp:data.ts\n}]\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 280,
+        "wires": [
+            [
+                "62dc74f7188aa27a"
+            ]
+        ]
+    },
+    {
+        "id": "62dc74f7188aa27a",
+        "type": "influxdb batch",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "bf3db3a0caf07bb4",
+        "precision": "",
+        "retentionPolicy": "",
+        "name": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 1040,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "88e191fcb5a7e06d",
+        "type": "influxdb out",
+        "z": "aa6bb05e5ab711d5",
+        "influxdb": "bf3db3a0caf07bb4",
+        "name": "",
+        "measurement": "mesures",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 1070,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "de03f0667a96596b",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Génération des données Sous-sol",
+        "func": "var ts =new(Date);\nmsg.payload = [{\n        \"Temperature\": (50 - Math.random() * 100).toFixed(1),\n        \"Humidity\": (Math.random() * 100).toFixed(0),\n        \"Pression\": (90 + Math.random() * 20).toFixed(1),\n\n        \"Capteur\": \"BME280\",\n        \"LIEU\": \"Sous-sol\",\n        \"time\" : ts\n}];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "88e191fcb5a7e06d"
+            ]
+        ]
+    },
+    {
+        "id": "78f89cb012b404c4",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Génération des données Garage",
+        "func": "var ts =new(Date);\nmsg.payload = [{\n        \"Temperature\": (50 - Math.random() * 100).toFixed(1),\n        \"Humidity\": (Math.random() * 100).toFixed(0),\n        \"Pression\": (90 + Math.random() * 20).toFixed(1),\n\n        \"Capteur\": \"BME280\",\n        \"LIEU\": \"Garage\",\n        \"time\" : ts\n}];\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 140,
+        "wires": [
+            [
+                "88e191fcb5a7e06d"
+            ]
+        ]
+    },
+    {
+        "id": "9db112eee3c051ac",
+        "type": "function",
+        "z": "aa6bb05e5ab711d5",
+        "name": "Format pour fureteur",
+        "func": "var obj = msg.payload;\nif(obj.ts == \"\")obj.ts = new(Date);\nmsg.payload=[{\"Capteur\":obj.tag.Capteur, \"LIEU\":obj.tag.LIEU, \"Temperature\":obj.field.Temperature, \"Humidity\":obj.field.Humidity,\"Pression\":obj.field.Pression, \"time\":obj.ts}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "cf033b685ef81bc4",
+                "65d30239df1cea7b"
+            ]
+        ]
+    },
+    {
+        "id": "38e442908d180c9f",
+        "type": "debug",
+        "z": "aa6bb05e5ab711d5",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 320,
+        "wires": []
+    }
+]
